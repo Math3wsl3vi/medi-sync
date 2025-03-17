@@ -1,8 +1,10 @@
 import { View, Text, TextInput, TouchableOpacity, ToastAndroid, Alert } from 'react-native';
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '~/utils/firebase';
+import { setLocalStorage } from '~/service/Storage';
+import { FirebaseError } from 'firebase/app';
 
 
 const SigninPage = () => {
@@ -16,23 +18,42 @@ const SigninPage = () => {
   
     // Function to handle user login
     const onSignIn = async () => {
-      if (!email || !password) {
-        ToastAndroid.show('Please enter both email and password.',ToastAndroid.BOTTOM);
+      if (!email || !password || !name) {
+        ToastAndroid.show('Please enter all details.', ToastAndroid.BOTTOM);
         return;
       }
+    
       try {
-          setLoading(true)
-        await signInWithEmailAndPassword(auth, email, password);
-        ToastAndroid.show('Success, Logged in successfully!', ToastAndroid.BOTTOM);
-        router.push('/(tabs)'); 
-      }catch (error) {
-          Alert.alert('Login Failed', (error as Error).message);
-          console.log(error)
-        }finally{
-          setLoading(false)
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+    
+        // Directly update the user obtained from userCredential
+        await updateProfile(user, { displayName: name });
+    
+        // Reload user before setting to local storage
+        await user.reload();
+    
+        await setLocalStorage('userDetail', {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || name,  
+        });
+    
+        console.log(user); // Debugging
+        ToastAndroid.show('Welcome to MediSync', ToastAndroid.BOTTOM);
+        router.push('/(tabs)');
+      } catch (error) {
+        if (error instanceof FirebaseError) {
+          if (error.code === 'auth/email-already-in-use') {
+            ToastAndroid.show('Email already in use. Login.', ToastAndroid.BOTTOM);
+          }
+        } else {
+          console.error(error);
+          ToastAndroid.show('Something went wrong. Try again.', ToastAndroid.BOTTOM);
         }
+      }
     };
-
+    
   return (
     <View className='flex-1 items-center justify-center bg-gray-100 p-4'>
       {/* Form Container */}

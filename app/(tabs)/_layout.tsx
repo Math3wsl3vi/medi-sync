@@ -1,8 +1,22 @@
-import { Link, Tabs } from 'expo-router';
+import { Link, Tabs, useRouter } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { useEffect, useState } from 'react';
+import { getLocalStorage } from '~/service/Storage';
 
 export default function TabLayout() {
+  const router = useRouter()
+  useEffect(()=> {
+    getUserDetail();
+  },[])
+  const getUserDetail =async ()=> {
+    const userInfo = await getLocalStorage('userDetail')
+    getLocalStorage('userDetail').then(data => console.log("Retrieved user:", data));
+    if(!userInfo){
+      router.replace('/login')
+    }
+  }
+ 
   return (
     <Tabs
       screenOptions={{

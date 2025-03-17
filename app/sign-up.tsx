@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import Checkbox from 'expo-checkbox';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '~/utils/firebase';
+import { setLocalStorage } from './../service/Storage'
 
 
 const LoginPage = () => {
@@ -21,22 +22,26 @@ const LoginPage = () => {
       return;
     }
 
-    try {
-      setLoading(true);
-      await signInWithEmailAndPassword(auth, email, password);
-      
-      // Show success message
-      ToastAndroid.show('Success! Logged in successfully.', ToastAndroid.SHORT);
-
-      // Navigate to the home page
-      router.replace('/(tabs)'); 
-      
-    } catch (error: any) {
-      const errorMessage = error?.message || 'An error occurred. Please try again.';
-      Alert.alert('Login Failed', errorMessage);
-    } finally {
-      setLoading(false);
+    signInWithEmailAndPassword(auth, email, password)
+    .then(async(userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      ToastAndroid.show('Welcome Back',ToastAndroid.BOTTOM)
+      // Alert.alert('Welcome Back')
+      console.log(user)
+      await setLocalStorage('userDetail', user)
+      router.replace('/(tabs)')
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(error)
+    if(errorCode =='auht/invalid-credentials'){
+      ToastAndroid.show('Invalid Credentials', ToastAndroid.BOTTOM)
     }
+
+    });
   };
 
   return (
@@ -99,7 +104,7 @@ const LoginPage = () => {
           disabled={loading}
         >
           <Text className='text-white text-center text-lg font-bold'>
-            {loading ? 'Loading...' : 'Sign In'}
+            {loading ? 'Loading...' : 'Login'}
           </Text>
         </TouchableOpacity>
 

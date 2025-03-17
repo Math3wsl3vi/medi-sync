@@ -7,7 +7,7 @@ const LoginScreen = () => {
   return (
     <View>
       <View className='flex items-center mt-20'>
-        <Image source={require('./../assets/login.png')} className='w-[210px] h-[450px] rounded-md'/>
+        <Image source={require('./../assets/login.png')} className='w-[230px] h-[450px] rounded-md'/>
       </View>
       <View className='p-[25px] bg-green-1 h-full flex items-center -mt-1 rounded-xl'>
         <Text className='text-5xl uppercase font-bold text-white text-center'>Stay on track, stay healthy!</Text>
