@@ -11,7 +11,7 @@ const MedicationHeader = () => {
      <TouchableOpacity 
      onPress={()=>router.back()}
      className='absolute m-4'>
-     <AntDesign name="arrowleft" size={30} color="black" />
+     <AntDesign name="arrowleft" size={25} color="black" />
      </TouchableOpacity>
     </View>
   )

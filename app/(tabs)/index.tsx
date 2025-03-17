@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Redirect, Stack, useRouter } from 'expo-router';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from '~/components/Button';
 import Header from '~/components/home/Header';
 import { auth } from '~/utils/firebase';
 import { removeLocalStorage } from '~/service/Storage';
 import EmptyMedication from '~/components/home/EmptyMedication';
+import MedicationList from '~/components/home/MedicationList';
 
 export default function Home() {
   const [user, setUser] = useState(auth.currentUser);
@@ -35,13 +36,14 @@ export default function Home() {
   }
 
   return (
-    <View className='bg-white h-full p-5'>
+    <ScrollView className='bg-white h-full p-5'>
       <Header />
       {/* <Button title='logout' onPress={async () => {
         await signOut(auth);
         await removeLocalStorage(); 
       }} /> */}
-      <EmptyMedication/>
-    </View>
+      {/* <EmptyMedication/> */}
+      <MedicationList/>
+    </ScrollView>
   );
 }
