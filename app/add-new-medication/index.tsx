@@ -1,11 +1,14 @@
-import { View, Text } from 'react-native'
+import { View, Text, ScrollView } from 'react-native'
 import React from 'react'
+import MedicationHeader from '~/components/add-new/MedicationHeader'
+import AddMedicationForm from '~/components/add-new/AddMedicationForm'
 
 const AddNewMeds = () => {
   return (
-    <View>
-      <Text>AddNewMeds</Text>
-    </View>
+    <ScrollView className='h-full bg-white'>
+      <MedicationHeader/>
+      <AddMedicationForm/>
+    </ScrollView>
   )
 }
 
