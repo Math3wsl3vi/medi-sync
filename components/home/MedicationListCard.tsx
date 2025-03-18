@@ -24,13 +24,13 @@ interface Medication {
         <Image source={{uri:medicine?.type?.icon}} className='h-20 w-20'/>
         </View>
         <View className='flex-1'>
-            <Text className='text-3xl font-bold'>{medicine.name}</Text>
-            <Text className='text-xl font-semibold'>{medicine.dosage}</Text>
-            <Text className='font-semibold'>{medicine.type?.name}</Text>
+            <Text className='text-xl font-popSb text-gray-500 capitalize'>{medicine.name}</Text>
+            <Text className='text-2xl font-semibold font-popSb uppercase text-green-1'>{medicine.dosage}</Text>
+            <Text className='font-popSb text-gray-400 mt-5 uppercase'>{medicine.type?.name}</Text>
         </View>
         <View className='bg-slate-50 p-2 rounded-xl h-fit flex justify-center items-center px-4'>
         <Ionicons name="timer-outline" size={24} color="#22b378" />
-        <Text className='text-xl font-bold'>{medicine.when}</Text>
+        <Text className='text-xl font-popB'>{medicine.when}</Text>
         </View>
       </View>
     </View>

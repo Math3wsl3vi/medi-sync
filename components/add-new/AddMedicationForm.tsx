@@ -50,7 +50,7 @@ const AddMedicationForm = () => {
 
     return (
         <View className="mt-10 bg-green-50 h-full m-4 rounded-md p-2">
-            <Text className="text-3xl font-semibold mt-3">Add new medication</Text>
+            <Text className="text-2xl mt-3 font-popSb">Add new medication</Text>
             <View className="flex gap-5">
 
                 {/* Medication Name */}
@@ -58,7 +58,7 @@ const AddMedicationForm = () => {
                     <Ionicons name="medkit-outline" size={24} color="#22b378" />
                     <TextInput
                         placeholder="Medication Name"
-                        className="w-[90%] pl-4"
+                        className="w-[90%] pl-4 font-pop"
                         onChangeText={(value) => handleInputChange('name', value)}
                     />
                 </View>
@@ -80,7 +80,7 @@ const AddMedicationForm = () => {
                             }`}
                         >
                             <Text
-                                className={`text-[15px] font-semibold ${
+                                className={`text-[13px] font-popSb ${
                                     (formData.type as { name: string; icon: string })?.name === item.name
                                         ? 'text-white'
                                         : 'text-black'
@@ -97,7 +97,7 @@ const AddMedicationForm = () => {
                     <Ionicons name="eyedrop-outline" size={24} color="#22b378" />
                     <TextInput
                         placeholder="Dosage Eg. 10ml, 5ml"
-                        className="w-[90%] pl-4"
+                        className="w-[90%] pl-4 font-pop"
                         onChangeText={(value) => handleInputChange('dosage', value)}
                     />
                 </View>
@@ -122,7 +122,7 @@ const AddMedicationForm = () => {
                     <Ionicons name="calendar-outline" size={24} color="#22b378" />
                     <TextInput 
                         placeholder='Number of Days' 
-                        className='w-[90%] pl-4' 
+                        className='w-[90%] pl-4 font-pop' 
                         keyboardType="numeric"
                         onChangeText={(value) => handleInputChange('days', parseInt(value) || 0)}
                     />
@@ -151,7 +151,7 @@ const AddMedicationForm = () => {
                 className="w-full py-4 px-4 bg-green-500 rounded-md">
                     {loading ? 
                     <ActivityIndicator size={'large'} color={'white'}/> :
-                    <Text className="text-center text-white text-2xl">Add Medication</Text>
+                    <Text className="text-center text-white text-2xl font-popSb">Add Medication</Text>
 
                     }
                 </TouchableOpacity>

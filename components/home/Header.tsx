@@ -27,10 +27,10 @@ const Header = () => {
       <View className='flex flex-row items-center justify-between'>
         <View className='flex flex-row gap-5 items-center'>
         <Image source={require('./../../assets/logo.png')} style={{ width: 30, height: 30 }} />
-        <Text className='text-2xl'>Hello {user?.displayName || 'Guest'} 👋</Text>
+        <Text className='text-2xl capitalize font-popSb text-gray-400'>Hello {user?.displayName || 'Guest'} 👋</Text>
         </View>
         <View className='justify-end'>
-        <Ionicons name="settings" size={24} color="black" />
+        <Ionicons name="settings-outline" size={30} color="black" />
         </View>
       </View>
     </View>

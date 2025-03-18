@@ -75,7 +75,7 @@ const MedicationReminder = () => {
                         <View className={`mx-2 rounded-md p-4 py-7 ${
                             selectedDate === item ? 'bg-green-500' : 'bg-green-100'
                         }`}>
-                            <Text className={`text-lg font-semibold ${
+                            <Text className={`text-lg font-popSb ${
                                 selectedDate === item ? 'text-white' : 'text-gray-700'
                             }`}>
                                 {item}
