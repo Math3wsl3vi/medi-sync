@@ -69,7 +69,7 @@ const MedicationReminder = () => {
                 keyExtractor={(item, index) => index.toString()}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingHorizontal: 5 }}
+                contentContainerStyle={{ paddingHorizontal: -1 }}
                 renderItem={({ item }) => (
                     <TouchableOpacity onPress={() => setSelectedDate(item)}>
                         <View className={`mx-2 rounded-md p-4 py-7 ${
