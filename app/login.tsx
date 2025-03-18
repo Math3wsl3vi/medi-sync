@@ -13,7 +13,7 @@ const LoginScreen = () => {
         <Text className='text-5xl uppercase font-bold text-white text-center font-popB'>Stay on track, stay healthy!</Text>
         <Text className='text-xl font-semibold mt-10 text-white text-center font-popSb'>Track your medication, take control of your health. Stay Consistent. Gotta Stay Ready. Gotta stay in the cold!</Text>
         <TouchableOpacity
-        onPress={()=>router.push('/SigninPage')}
+        onPress={()=>router.push('/sign-up')}
         className='py-3 px-4 bg-white rounded-md w-full mt-5'>
             <Text className='text-center font-semibold text-lg text-green-1 font-popSb'>Continue</Text>
         </TouchableOpacity>
