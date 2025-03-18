@@ -1,10 +1,14 @@
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { getLocalStorage } from '~/service/Storage';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { signOut } from 'firebase/auth';
+import { useRouter } from 'expo-router';
+import { auth } from '~/utils/firebase';
 
 const Header = () => {
   const [user, setUser] = useState<{ displayName?: string } | null>(null);
+  const router = useRouter()
 
   useEffect(() => {
     const getUserDetail = async () => {
@@ -22,6 +26,16 @@ const Header = () => {
     getUserDetail();
   }, []); 
 
+    const handleLogout = async () => {
+      try {
+        await signOut(auth);
+        setUser(null); // Ensure re-render
+        router.replace('/login'); // Redirect after logout
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
+    };
+
   return (
     <View className='mt-5'>
       <View className='flex flex-row items-center justify-between'>
@@ -29,9 +43,11 @@ const Header = () => {
         <Image source={require('./../../assets/logo.png')} style={{ width: 30, height: 30 }} />
         <Text className='text-2xl capitalize font-popSb text-gray-400'>Hello {user?.displayName || 'Guest'} 👋</Text>
         </View>
-        <View className='justify-end'>
+        <TouchableOpacity 
+        onPress={handleLogout}
+        className='justify-end'>
         <Ionicons name="settings-outline" size={30} color="black" />
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

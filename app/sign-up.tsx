@@ -29,7 +29,11 @@ const LoginPage = () => {
       ToastAndroid.show('Welcome Back',ToastAndroid.BOTTOM)
       // Alert.alert('Welcome Back')
       console.log(user)
-      await setLocalStorage('userDetail', user)
+      await setLocalStorage('userDetail', {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName || name,  
+              });
       router.replace('/(tabs)')
       // ...
     })
