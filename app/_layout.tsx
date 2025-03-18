@@ -1,44 +1,43 @@
-import '../global.css';
 import { useFonts } from "expo-font";
-import {
-  Poppins_400Regular,
-  Poppins_600SemiBold,
-  Poppins_700Bold,
-} from "@expo-google-fonts/poppins";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { View, Text } from "react-native";
-import { Stack } from 'expo-router';
+import { Stack } from "expo-router";
+import '../global.css';
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+  initialRouteName: "(tabs)",
 };
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
-    pop: Poppins_400Regular,
-    popSb: Poppins_600SemiBold,
-    popB: Poppins_700Bold,
+    PoppinsRegular: require("../assets/fonts/Poppins-Regular.ttf"),
+    PoppinsSemiBold: require("../assets/fonts/Poppins-SemiBold.ttf"),
+    PoppinsBold: require("../assets/fonts/Poppins-Bold.ttf"),
   });
 
   useEffect(() => {
     if (fontsLoaded) {
+      console.log("Fonts loaded");
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
-    return null; 
+    console.log("Fonts failed to load");
+    return null;
   }
+
   return (
-    <Stack screenOptions={{
-      headerShown: false
-    }}>
-      <Stack.Screen name="(tabs)"/>
-      <Stack.Screen name="login" options={{ presentation: 'modal' }} />
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="login" options={{ presentation: "modal" }} />
     </Stack>
   );
 }
