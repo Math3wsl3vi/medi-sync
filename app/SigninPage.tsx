@@ -58,12 +58,12 @@ const SigninPage = () => {
     <View className='flex-1 items-center justify-center bg-gray-100 p-4'>
       {/* Form Container */}
       <View className='bg-white p-6 rounded-2xl shadow-lg w-[90%] max-w-md'>
-        <Text className='text-2xl font-bold text-center mb-1'>Welcome to MediSync</Text>
-        <Text className='text-center text-gray-500 mb-6 font-semibold'>Let's Sign You In</Text>
+        <Text className='text-2xl font-bold text-center mb-1 font-popSb'>Welcome to MediSync</Text>
+        <Text className='text-center text-gray-500 mb-6 font-semibold font-pop'>Let's Sign You In</Text>
 
         {/* Name Input */}
         <View className='mb-4'>
-          <Text className='text-lg font-semibold mb-1'>Name</Text>
+          <Text className='text-lg font-semibold mb-1 font-popSb'>Name</Text>
           <TextInput 
             placeholder='Name' 
             className='border rounded-md p-3 border-gray-300' 
@@ -75,7 +75,7 @@ const SigninPage = () => {
 
         {/* Email Input */}
         <View className='mb-4'>
-          <Text className='text-lg font-semibold mb-1'>Email</Text>
+          <Text className='text-lg font-semibold mb-1 font-popSb'>Email</Text>
           <TextInput 
                 placeholder='Email' 
                 className='border rounded-md p-3 border-gray-300' 
@@ -87,7 +87,7 @@ const SigninPage = () => {
 
         {/* Password Input with Toggle */}
         <View className='mb-6'>
-          <Text className='text-lg font-semibold mb-1'>Password</Text>
+          <Text className='text-lg font-semibold mb-1 font-popSb'>Password</Text>
           <View className='flex-row items-center border rounded-md px-3 border-gray-300'>
             <TextInput
               placeholder='Password'
@@ -104,13 +104,13 @@ const SigninPage = () => {
         </View>
 
         {/* Sign Up Button */}
-        <TouchableOpacity className='bg-black p-3 rounded-md' onPress={onSignIn}>
-          <Text className='text-white text-center text-lg font-bold'>Sign Up</Text>
+        <TouchableOpacity className='bg-green-1 p-3 rounded-md' onPress={onSignIn}>
+          <Text className='text-white text-center text-lg font-bold font-popSb'>Sign Up</Text>
         </TouchableOpacity>
 
         {/* Login Redirect */}
-        <Text className='text-center text-gray-500 mt-4'>
-          Already have an account? <TouchableOpacity onPress={()=>router.push('/sign-up')}><Text className='text-black font-semibold'>Login</Text></TouchableOpacity>
+        <Text className='text-center text-gray-500 mt-4 text-xl font-pop'>
+          Already have an account? <TouchableOpacity onPress={()=>router.push('/sign-up')}><Text className='text-black font-semibold text-xl font-popSb'>Login</Text></TouchableOpacity>
         </Text>
       </View>
     </View>

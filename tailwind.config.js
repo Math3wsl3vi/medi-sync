@@ -5,6 +5,11 @@ module.exports = {
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
+      fontFamily: {
+        pop: ["PoppinsRegular"],
+        popSb: ["PoppinsSemiBold"],
+        popB: ["PoppinsBold"],
+      },
       colors: {
         green: {
           1:'#22b378',

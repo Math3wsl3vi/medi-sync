@@ -48,12 +48,12 @@ const LoginPage = () => {
     <View className='flex-1 items-center justify-center bg-gray-100 p-4'>
       {/* Form Container */}
       <View className='bg-white p-6 rounded-2xl shadow-lg w-[90%] max-w-md'>
-        <Text className='text-2xl font-bold text-center mb-1'>Welcome Back to MediSync</Text>
-        <Text className='text-center text-gray-500 mb-6 font-semibold'>Login to Continue</Text>
+        <Text className='text-2xl font-bold text-center mb-1 font-pop'>Welcome Back to MediSync</Text>
+        <Text className='text-center text-gray-500 mb-6 font-popSb'>Login to Continue</Text>
 
         {/* Email Input */}
         <View className='mb-4'>
-          <Text className='text-lg font-semibold mb-1'>Email</Text>
+          <Text className='text-lg font-semibold mb-1 font-popSb'>Email</Text>
           <TextInput 
             placeholder='Email' 
             className='border rounded-md p-3 border-gray-300' 
@@ -66,7 +66,7 @@ const LoginPage = () => {
 
         {/* Password Input with Toggle */}
         <View className='mb-4'>
-          <Text className='text-lg font-semibold mb-1'>Password</Text>
+          <Text className='text-lg font-semibold mb-1 font-popSb'>Password</Text>
           <View className='flex-row items-center border rounded-md px-3 border-gray-300'>
             <TextInput
               placeholder='Password'
@@ -90,29 +90,29 @@ const LoginPage = () => {
               onValueChange={setChecked} 
               color={isChecked ? '#000' : undefined} 
             />
-            <Text className='ml-2 text-gray-500'>Remember me</Text>
+            <Text className='ml-2 text-gray-500 font-pop'>Remember me</Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/forgot-password')}>
-            <Text className='text-black font-semibold'>Forgot Password?</Text>
+            <Text className='text-black font-popSb'>Forgot Password?</Text>
           </TouchableOpacity>
         </View>
 
         {/* Sign In Button */}
         <TouchableOpacity 
-          className={`bg-black p-3 rounded-md ${loading ? 'opacity-50' : ''}`} 
+          className={`bg-green-1 p-3 rounded-md ${loading ? 'opacity-50' : ''}`} 
           onPress={onSignIn}
           disabled={loading}
         >
-          <Text className='text-white text-center text-lg font-bold'>
+          <Text className='text-white text-center text-lg font-popSb'>
             {loading ? 'Loading...' : 'Login'}
           </Text>
         </TouchableOpacity>
 
         {/* Register Redirect */}
-        <Text className='text-center text-gray-500 mt-4'>
+        <Text className='text-center text-gray-500 mt-4 text-xl font-pop'>
           Don't have an account? 
-          <TouchableOpacity onPress={() => router.push('/SigninPage')}>
-            <Text className='text-black font-semibold'> Register</Text>
+          <TouchableOpacity onPress={() => router.push('/SigninPage')} className=''>
+            <Text className='text-black text-xl font-popSb'> Register</Text>
           </TouchableOpacity>
         </Text>
       </View>
