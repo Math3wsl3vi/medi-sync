@@ -163,6 +163,18 @@ export default function MedicationComponent() {
     );
   }
 
+  const handleDrugPress = (med:Medication) => { 
+    router.push({
+      pathname: '/medication',
+      params: {
+        name:med.name,
+        dosage:med.dosage,
+        frequency: med.frequency,
+        duration:med.duration
+      }
+    })
+  }
+
   return (
     <ScrollView className="bg-white h-full p-1 mt-4 w-full mb-[200px]">
       <View>
@@ -176,6 +188,7 @@ export default function MedicationComponent() {
         <View className="flex flex-row flex-wrap gap-4">
         {patient.medications.map((med, index) => (
           <TouchableOpacity
+          onPress={()=>handleDrugPress(med)}
             key={index}
            className="w-[48%] bg-green-50 p-3 rounded-2xl shadow-sm mt-3 h-36"
           >
@@ -191,16 +204,7 @@ export default function MedicationComponent() {
              </View>
             </View>
             <View className="flex flex-row justify-between items-center">
-            <View className="bg-green-100 p-2 rounded-xl h-fit flex justify-end px-4 w-32 items-center">
-              <View className="flex flex-row gap-1 items-center">
-                <Text className="text-lg font-popSb text-gray-600">
-                  {med.dosage}
-                </Text>
-                <Entypo name="cross" size={22} color="black" />
-                <Text className="text-lg font-popSb text-gray-600">
-                  {med.frequency}
-                </Text>
-              </View>
+            <View className="bg-green-100 p-2 py-3 rounded-xl h-fit flex justify-end px-4 w-32 items-center">
               <Text className="text-gray-600 text-lg font-popSb">
                7:00 AM
               </Text>

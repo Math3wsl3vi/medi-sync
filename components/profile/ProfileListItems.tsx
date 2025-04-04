@@ -19,6 +19,10 @@ const listItems = [
         imageUrl: require('./../../assets/achieve.png'),
         name: 'Badges',
       },
+      {
+        imageUrl: require('./../../assets/fire.png'),
+        name: 'Streaks',
+      },
 ]
 
 
