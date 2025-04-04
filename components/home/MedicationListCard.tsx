@@ -1,11 +1,14 @@
-import { View, Text, Image } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { doc, setDoc, Timestamp } from 'firebase/firestore';
+import { db } from '~/utils/firebase';
+import moment from 'moment';
 
 interface Medication {
     name: string;
     dosage: string;
-    when:string;
+    // when:string;
     type?: {
       icon: string;
       name:string;
@@ -15,6 +18,19 @@ interface Medication {
   interface MedicationListCardProps {
     medicine: Medication;
   }
+
+  const markMedication = async (email: string, medicationId: string, taken: boolean) => {
+    try {
+        const emailKey = email.replace(/[@.]/g, "_");
+        const historyRef = doc(db, "medication-tracking", emailKey, medicationId, "history", moment().format("YYYY-MM-DD"));
+
+        await setDoc(historyRef, { taken, timestamp: Timestamp.now() });
+        console.log(`✅ Medication ${medicationId} marked as ${taken ? "taken" : "missed"}`);
+    } catch (error) {
+        console.error("❌ Error updating medication status:", error);
+    }
+};
+
   
   const MedicationListCard: React.FC<MedicationListCardProps> = ({ medicine }) => {
   return (
@@ -30,7 +46,16 @@ interface Medication {
         </View>
         <View className='bg-slate-50 p-2 rounded-xl h-fit flex justify-center items-center px-4'>
         <Ionicons name="timer-outline" size={24} color="#22b378" />
-        <Text className='text-xl font-popB'>{medicine.when}</Text>
+        {/* <Text className='text-xl font-popB'>{medicine.when}</Text> */}
+        </View>
+        <View className='bg-slate-50 p-2 rounded-xl h-fit flex justify-between items-center px-4'>
+        <TouchableOpacity onPress={() => markMedication(user.email, item.id, true)}>
+            <Text>✅</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => markMedication(user.email, item.id, false)}>
+            <Text>❌ </Text>
+        </TouchableOpacity>
         </View>
       </View>
     </View>

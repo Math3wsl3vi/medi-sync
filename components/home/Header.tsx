@@ -37,11 +37,11 @@ const Header = () => {
     };
 
   return (
-    <View className='mt-5'>
+    <View className='mt-2 mb-4'>
       <View className='flex flex-row items-center justify-between'>
         <View className='flex flex-row gap-5 items-center'>
         <Image source={require('./../../assets/logo.png')} style={{ width: 30, height: 30 }} />
-        <Text className='text-2xl capitalize font-popSb text-gray-400'>Hello {user?.displayName || 'Guest'} 👋</Text>
+        <Text className='text-2xl capitalize font-popSb text-green-1'>Hello {user?.displayName || 'Guest'} 👋</Text>
         </View>
         <TouchableOpacity 
         onPress={handleLogout}

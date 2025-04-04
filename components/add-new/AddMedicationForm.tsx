@@ -31,7 +31,7 @@ const AddMedicationForm = () => {
         }
         setLoading(true)
         try {
-            await setDoc(doc(db,'patient-medication', docId),{
+            await setDoc(doc(db,'user-added-medication', docId),{
                 ...formData,
                 userEmail: user?.email,
                 docId:docId
