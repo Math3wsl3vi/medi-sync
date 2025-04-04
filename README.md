@@ -62,13 +62,13 @@ Ensure you have the following installed:
 ## 📸 Screenshots
 
 ### Intro Screen
-![ Intro Screen](screenshots/home.jpg)
+![ Intro Screen](screenshots/home.jpeg)
 
 ### Home Screen
-![Home Screen](screenshots/home1.jpg)
+![Home Screen](screenshots/home1.jpeg)
 
 ### Profile
-![Profile](screenshots/profile.jpg)
+![Profile](screenshots/profile.jpeg)
 
 ## 📜 License
 
