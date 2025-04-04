@@ -32,7 +32,7 @@ Ensure you have the following installed:
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/math3wsl3vi/medisync.git
+   git clone https://github.com/math3wsl3vi/medi-sync.git
    cd medisync
    ```
 
@@ -56,12 +56,19 @@ Ensure you have the following installed:
 4. Start the app:
 
    ```sh
-   expo start
+   npm start
    ```
 
 ## 📸 Screenshots
 
-(Include screenshots of the app here)
+### Intro Screen
+![ Intro Screen](screenshots/home.jpg)
+
+### Home Screen
+![Home Screen](screenshots/home1.jpg)
+
+### Profile
+![Profile](screenshots/profile.jpg)
 
 ## 📜 License
 
