@@ -62,19 +62,18 @@ Ensure you have the following installed:
 ## 📸 Screenshots
 
 ### Intro Screen
-![ Intro Screen](screenshots/home.jpg)
+<img src="screenshots/home.jpeg" alt="Home Screen" width="300" />
 
 ### Home Screen
-![Home Screen](screenshots/home1.jpg)
+<img src="screenshots/home1.jpeg" alt="Home Screen" width="300" />
 
 ### Profile
-![Profile](screenshots/profile.jpg)
-
+<img src="screenshots/profile.jpeg" alt="Home Screen" width="300" />
 ## 📜 License
 
 This project is licensed under the MIT License.
 
 ---
 
-Made with ❤️ by Master Bruce & Contributors
+Made with ❤️ by math3wsl3vi.
 
