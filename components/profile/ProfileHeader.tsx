@@ -11,8 +11,10 @@ const ProfileHeader = () => {
     <View className='p-1'>
       {/* icons */}
       <View className="flex items-center justify-between flex-row">
-      <TouchableOpacity className="justify-center flex items-center border p-2 rounded-full border-gray-400">
-       <Image source={require('./../../assets/back.png')} style={{ width: 25, height: 25 }} />
+      <TouchableOpacity 
+      onPress={()=>router.back()}
+      className="justify-center flex items-center border p-3 rounded-full border-gray-400">
+      <Image source={require('./../../assets/back1.png')} style={{ width: 20, height: 20 }} />
        </TouchableOpacity>
         <Text className='font-popSb text-2xl text-green-1'>My Profile</Text>
         <TouchableOpacity

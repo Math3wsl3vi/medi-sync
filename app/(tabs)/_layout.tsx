@@ -51,15 +51,31 @@ export default function TabLayout() {
     checkAuth();
   }, []);
 
-  if (isChecking) return null; // Prevent UI rendering until auth is checked
+  if (isChecking) return null;
 
   return (
     <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: "black",
-        headerShown: false,
-      }}
-    >
+  screenOptions={{
+    tabBarActiveTintColor: "#10B981", 
+    tabBarInactiveTintColor: "#9CA3AF", 
+    tabBarStyle: {
+      backgroundColor: "#F9FAFB", 
+      borderTopWidth: 1,
+      borderTopColor: "#E5E7EB",
+      height: 70,
+      paddingBottom: 10,
+      paddingTop: 10,
+    },
+    tabBarLabelStyle: {
+      fontSize: 14,
+      fontFamily: "Poppins-SemiBold",
+    },
+    tabBarIconStyle: {
+      marginBottom: 0,
+    },
+    headerShown: false,
+  }}
+>
       <Tabs.Screen
         name="index"
         options={{

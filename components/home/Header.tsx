@@ -39,15 +39,15 @@ const Header = () => {
   return (
     <View className='mt-2 mb-4'>
       <View className='flex flex-row items-center justify-between'>
-        <View className='flex flex-row gap-5 items-center'>
-        <Image source={require('./../../assets/logo.png')} style={{ width: 30, height: 30 }} />
+        <View className='flex flex-row gap-2 items-center border p-1 border-gray-300 rounded-full'>
+        <Image source={require('./../../assets/me.jpg')} style={{ width: 35, height: 35 }} className='rounded-full' />
         <Text className='text-2xl capitalize font-popSb text-green-1'>Hello {user?.displayName || 'Guest'} 👋</Text>
         </View>
         <TouchableOpacity 
-        onPress={handleLogout}
-        className='justify-end'>
-        <Ionicons name="settings-outline" size={30} color="black" />
-        </TouchableOpacity>
+          onPress={()=>router.back()}
+          className="justify-center flex items-center border p-3 rounded-full border-gray-400">
+          <Image source={require('./../../assets/bell.png')} style={{ width: 20, height: 20 }} />
+            </TouchableOpacity>
       </View>
     </View>
   );
