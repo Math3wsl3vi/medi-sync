@@ -1,6 +1,7 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 import DatePicker from './DatePicker'
+import MedicationComponent from './MedicationComponent'
 
 const MedicationDays = () => {
   return (
@@ -9,6 +10,7 @@ const MedicationDays = () => {
       <View>
         <DatePicker/>
       </View>
+      <MedicationComponent/>
     </View>
   )
 }

@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { View, Text, ScrollView, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, ActivityIndicator, Image, TouchableOpacity } from "react-native";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { auth, db } from "~/utils/firebase";
 import { useRouter } from "expo-router";
 import { onAuthStateChanged } from "firebase/auth";
 import Entypo from "@expo/vector-icons/Entypo";
+import EmptyMedication from "./EmptyMedication";
 
 interface Medication {
   name: string;
@@ -146,7 +147,7 @@ export default function MedicationComponent() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-gray-100">
+      <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color="#22b73a" />
       </View>
     );
@@ -154,52 +155,65 @@ export default function MedicationComponent() {
 
   if (!patient || patient.medications.length === 0) {
     return (
-      <View className="flex-1 items-center justify-center bg-gray-100">
-        <Text className="text-gray-500">No recent medications found.</Text>
-      </View>
+      <View>
+            <Image source={require('./../../assets/find.png')} className='w-full h-[500px]'/>
+            <Text className='text-[40px] mt-5 text-green-1 font-popB'>No Medications For You!</Text>
+            <View className="h-[50px]"></View>
+          </View>
     );
   }
 
   return (
-    <ScrollView className="bg-white h-full p-4 w-full">
+    <ScrollView className="bg-white h-full p-1 mt-4 w-full mb-[200px]">
       <View>
-        <Text className="mt-8 text-xl font-popSb text-center text-green-1">
+        {/* <Text className="mt-8 text-xl font-popSb text-center text-green-1">
           Latest Medication
-        </Text>
+        </Text> */}
 
         <Text className="text-lg font-semibold text-green-700 font-popSb">
-          Visited Hospital on: {patient.latestVisitDate}
+          Visited The Hospital on: {patient.latestVisitDate}
         </Text>
-
+        <View className="flex flex-row flex-wrap gap-4">
         {patient.medications.map((med, index) => (
-          <View
+          <TouchableOpacity
             key={index}
-            className="w-full p-2 rounded-xl flex flex-row justify-between border gap-4 border-gray-100 mt-3"
+           className="w-[48%] bg-green-50 p-3 rounded-2xl shadow-sm mt-3 h-36"
           >
-            <View className="flex-1">
+            <View className="flex-1 flex flex-row mb-2">
+              <View>
+                <Image source={require('./../../assets/drug.png')} className="w-10 h-10"/>
+              </View>
+             <View>
+             <Text className="font-popSb text-xs">MediSync</Text>
               <Text className="text-xl font-popSb text-gray-500 capitalize">
                 {med.name}
               </Text>
-              <Text className="text-xl font-semibold font-popSb uppercase text-green-1 mt-5">
-                Ksh {med.amount}
-              </Text>
+             </View>
             </View>
-            <View className="bg-slate-50 p-2 rounded-xl h-fit flex justify-end px-4 w-32 items-center">
+            <View className="flex flex-row justify-between items-center">
+            <View className="bg-green-100 p-2 rounded-xl h-fit flex justify-end px-4 w-32 items-center">
               <View className="flex flex-row gap-1 items-center">
-                <Text className="text-gray-600 text-2xl font-pop">
+                <Text className="text-lg font-popSb text-gray-600">
                   {med.dosage}
                 </Text>
                 <Entypo name="cross" size={22} color="black" />
-                <Text className="text-gray-600 text-2xl font-pop">
+                <Text className="text-lg font-popSb text-gray-600">
                   {med.frequency}
                 </Text>
               </View>
-              <Text className="text-gray-600 text-sm font-pop">
-                {med.duration} days
+              <Text className="text-gray-600 text-lg font-popSb">
+               7:00 AM
               </Text>
             </View>
+            <TouchableOpacity 
+              onPress={()=>router.back()}
+              className="justify-center flex items-center p-2 rounded-full bg-white">
+              <Image source={require('./../../assets/right-up.png')} style={{ width: 20, height: 20 }} />
+                </TouchableOpacity>
           </View>
+          </TouchableOpacity>
         ))}
+        </View>
       </View>
     </ScrollView>
   );

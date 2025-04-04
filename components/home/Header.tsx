@@ -41,10 +41,10 @@ const Header = () => {
       <View className='flex flex-row items-center justify-between'>
         <View className='flex flex-row gap-2 items-center border p-1 border-gray-300 rounded-full'>
         <Image source={require('./../../assets/me.jpg')} style={{ width: 35, height: 35 }} className='rounded-full' />
-        <Text className='text-2xl capitalize font-popSb text-green-1'>Hello {user?.displayName || 'Guest'} 👋</Text>
+        <Text className='text-xl capitalize font-popSb text-green-1'>Hello {user?.displayName || 'Guest'} 👋</Text>
         </View>
         <TouchableOpacity 
-          onPress={()=>router.back()}
+          onPress={handleLogout}
           className="justify-center flex items-center border p-3 rounded-full border-gray-400">
           <Image source={require('./../../assets/bell.png')} style={{ width: 20, height: 20 }} />
             </TouchableOpacity>

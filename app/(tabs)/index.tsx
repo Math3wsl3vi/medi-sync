@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Redirect, Stack, useRouter } from 'expo-router';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from '~/components/Button';
 import Header from '~/components/home/Header';
 import { auth } from '~/utils/firebase';
@@ -36,8 +36,15 @@ export default function Home() {
   return (
     <ScrollView className='bg-white h-full p-5'>
       <Header />
+      <View>
+           <Image 
+            source={require('./../../assets/pharm.png')} 
+            style={{ width: 300, height: 200, marginBottom: 10 }}
+            resizeMode="contain"
+            className="mb-5"
+        />
+      </View>
       <MedicationDays/>
-     
     </ScrollView>
   );
 }
