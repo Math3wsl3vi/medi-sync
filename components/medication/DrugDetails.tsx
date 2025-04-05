@@ -4,7 +4,7 @@ import { useLocalSearchParams } from 'expo-router'
 
 const DrugDetails = () => {
 
-    const { name, dosage, frequency, duration, reminderTimes } = useLocalSearchParams()
+    const { name, dosage, frequency, duration, reminderTimes, takenToday } = useLocalSearchParams()
   return (
     <View>
         {/* drug detail */}
@@ -22,13 +22,13 @@ const DrugDetails = () => {
             <View className='flex flex-row justify-between items-center gap-2.5 mt-10  w-full'>
             <View className='flex flex-col gap-3 items-center justify-center  w-28'>
             <View className='border rounded-full p-3 flex items-center justify-center border-gray-300'>
-            <Image source={require('./../../assets/check1.png')} className='w-8 h-8'/>
+            <Image source={require('./../../assets/check1.png')} style={{ tintColor:takenToday?.[0] ? 'green' : 'black' }} className='w-8 h-8'/>
             </View>
             <Text className='font-popSb text-xl text-green-1'>Taken</Text>
             </View>
             <View className='flex flex-col gap-3 items-center justify-center  w-28'>
             <View className='border rounded-full p-3 flex items-center justify-center border-gray-300'>
-            <Image source={require('./../../assets/editing.png')} className='w-8 h-8'/>
+            <Image source={require('./../../assets/pen.png')} className='w-8 h-8'/>
             </View>
             <Text className='font-popSb text-xl text-green-1'>Edit Times</Text>
             </View>

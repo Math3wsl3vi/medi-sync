@@ -253,20 +253,27 @@ export default function MedicationComponent() {
                 </View>
               </View>
               <View className="flex flex-row justify-between items-center">
-                <View className="bg-green-100 p-2 py-3 rounded-xl h-fit flex justify-end px-4 w-32 items-center">
+                <View className="bg-green-100 rounded-full flex flex-row justify-start gap-2 w-32 items-center p-1">
+               <View className="w-10 h-10 bg-white rounded-full p-2 flex items-center justify-center">
+               <Image source={require("./../../assets/clock1.png")} className="w-6 h-6" style={{tintColor:'green'}} />
+               </View>
                   <Text className="text-gray-600 text-lg font-popSb">
                     {med.reminderTimes?.[0] || "N/A"}
                   </Text>
-                  <Text className="text-sm text-gray-500 font-popSb">
-                    {med.takenToday?.[0] ? "Taken" : "Pending"}
-                  </Text>
                 </View>
                 <TouchableOpacity
-                  onPress={() => markDoseTaken(index, 0)} // Mark first dose as taken
-                  className="justify-center flex items-center p-2 rounded-full bg-white"
-                >
-                  <Image source={require("./../../assets/check1.png")} style={{ width: 16, height: 16, tintColor:'#22b73a' }} />
-                </TouchableOpacity>
+                    onPress={() => markDoseTaken(index, 0)}
+                    className={`justify-center flex items-center p-2 rounded-full ${
+                      med.takenToday?.[0] ? 'bg-green-500' : 'bg-green-100'
+                    }`}
+                  >
+                    {/* Add a check icon or any other indicator here */}
+                    <Image
+                      source={require('./../../assets/check1.png')}
+                      className="w-6 h-6"
+                      style={{ tintColor: med.takenToday?.[0] ? 'white' : 'black' }}
+                    />
+                  </TouchableOpacity>
               </View>
             </TouchableOpacity>
           ))}
