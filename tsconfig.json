@@ -4,10 +4,15 @@
     "strict": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
+    "moduleResolution": "bundler", // ✅ Add this for modern module resolution
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "types": ["react", "react-native"], // ✅ Ensure basic type support
     "paths": {
       "~/*": ["*"],
       "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
-    }
+    },
+    "skipLibCheck": true // ✅ Prevent errors in node_modules (useful in React Native)
   },
   "include": [
     "**/*.ts",

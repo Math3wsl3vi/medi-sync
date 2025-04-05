@@ -6,6 +6,7 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "~/utils/firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLocalStorage } from "~/service/Storage";
+import CustomTabBar from "~/components/CustomTabBar";
 
 export default function TabLayout() {
   const router = useRouter();
@@ -55,48 +56,10 @@ export default function TabLayout() {
 
   return (
     <Tabs
-  screenOptions={{
-    tabBarActiveTintColor: "#10B981", 
-    tabBarInactiveTintColor: "#9CA3AF", 
-    tabBarStyle: {
-      backgroundColor: "#F9FAFB", 
-      borderTopWidth: 1,
-      borderTopColor: "#E5E7EB",
-      height: 70,
-      paddingBottom: 10,
-      paddingTop: 10,
-    },
-    tabBarLabelStyle: {
-      fontSize: 14,
-      fontFamily: "Poppins-SemiBold",
-    },
-    tabBarIconStyle: {
-      marginBottom: 0,
-    },
-    headerShown: false,
-  }}
->
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => <MaterialIcons name="home" size={24} color="black" />,
-        }}
-      />
-      <Tabs.Screen
-        name="cabinet"
-        options={{
-          title: "Medication",
-          tabBarIcon: ({ color }) => <MaterialIcons name="medication" size={24} color="black" />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color }) => <AntDesign name="user" size={24} color="black" />,
-        }}
-      />
-    </Tabs>
+    screenOptions={{
+      headerShown: false,
+    }}
+    tabBar={(props) => <CustomTabBar {...props} />}
+  />
   );
 }

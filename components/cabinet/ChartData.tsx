@@ -6,7 +6,7 @@ import { AnimatedCircularProgress } from "react-native-circular-progress";
 const ChartData = () => {
     const progress = 60;
   return (
-    <View className='w-full rounded-xl bg-green-50 min-h-44 mt-4 p-2'>
+    <View className='w-full rounded-xl bg-green-50 min-h-44 mt-4 p-2 mb-4'>
         <View className='flex flex-row justify-between items-center'>
         <Text className='text-xl font-popSb mb-5 mt-3'>Medications Data</Text>
         <View className="justify-end p-2 rounded-full bg-white">

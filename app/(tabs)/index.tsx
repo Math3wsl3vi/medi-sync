@@ -34,7 +34,7 @@ export default function Home() {
   }
 
   return (
-    <ScrollView className='bg-white h-full p-5'>
+    <ScrollView className='bg-white h-screen p-5'>
       <Header />
       <View>
            <Image 
