@@ -265,7 +265,7 @@ export default function MedicationComponent() {
                   onPress={() => markDoseTaken(index, 0)} // Mark first dose as taken
                   className="justify-center flex items-center p-2 rounded-full bg-white"
                 >
-                  <Image source={require("./../../assets/right-up.png")} style={{ width: 20, height: 20 }} />
+                  <Image source={require("./../../assets/check1.png")} style={{ width: 16, height: 16, tintColor:'#22b73a' }} />
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
