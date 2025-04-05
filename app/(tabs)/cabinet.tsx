@@ -5,11 +5,12 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { useRouter } from 'expo-router'
 import { Image } from 'react-native'
 import ChartData from '~/components/cabinet/ChartData'
+import StreakData from '~/components/cabinet/StreakData'
 
 const Cabinet = () => {
   const router = useRouter()
   return (
-    <View className='p-4 bg-white h-full'>
+    <View className='p-4 bg-white h-full flex gap-5'>
       {/* top part nav */}
       <View className="flex items-center justify-between flex-row">
       <TouchableOpacity 
@@ -27,6 +28,7 @@ const Cabinet = () => {
       {/* pie data chart */}
       <ChartData/>
       {/* streak data */}
+      <StreakData/>
     </View>
   )
 }
