@@ -4,9 +4,8 @@ import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { auth, db } from "~/utils/firebase";
 import { useRouter } from "expo-router";
 import { onAuthStateChanged } from "firebase/auth";
-import Entypo from "@expo/vector-icons/Entypo";
-import EmptyMedication from "./EmptyMedication";
 
+// Medication interface with reminder times and taken status
 interface Medication {
   name: string;
   dosage: string;
@@ -14,6 +13,8 @@ interface Medication {
   frequency: string;
   duration: string;
   quantity: string;
+  reminderTimes?: string[];
+  takenToday?: boolean[]; // Tracks if each dose was taken today
 }
 
 interface Patient {
@@ -23,40 +24,71 @@ interface Patient {
   email: string;
   consultationFee: number;
   totalAmount: number;
-  medications: Medication[]; // Only latest visit's medications
+  medications: Medication[];
   latestVisitDate: string;
 }
+
+const calculateReminderTimes = (frequency: string, wakeUpTime: string): string[] => {
+  const [wakeHour, wakeMinute] = wakeUpTime.split(":").map(Number);
+  const baseTime = new Date();
+  baseTime.setHours(wakeHour, wakeMinute, 0, 0);
+
+  const addHours = (date: Date, hours: number) => {
+    const newDate = new Date(date);
+    newDate.setHours(date.getHours() + hours);
+    return newDate.toTimeString().slice(0, 5);
+  };
+
+  switch (frequency.toLowerCase()) {
+    case "1x/day":
+      return [wakeUpTime];
+    case "2x/day":
+      return [wakeUpTime, addHours(baseTime, 12)];
+    case "3x/day":
+      return [wakeUpTime, addHours(baseTime, 6), addHours(baseTime, 12)];
+    case "4x/day":
+      return [wakeUpTime, addHours(baseTime, 5), addHours(baseTime, 10), addHours(baseTime, 15)];
+    default:
+      return [wakeUpTime];
+  }
+};
 
 export default function MedicationComponent() {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loading, setLoading] = useState(true);
+  const [wakeUpTime, setWakeUpTime] = useState<string>("07:00");
+  const [currentDate, setCurrentDate] = useState(new Date().toDateString()); // Track current day
   const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        console.warn("No user found, redirecting to login...");
         router.replace("/login");
         return;
       }
 
       const email = user.email;
-      if (!email) {
-        console.error("User email not found.");
-        return;
-      }
+      if (!email) return;
 
       try {
-        console.log(`Fetching patient data for email: ${email}`);
+        const userRef = doc(db, "users", email.replace(/[@.]/g, "_"));
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.exists() ? userSnap.data() : {};
+        const fetchedWakeUpTime = userData.wakeUpTime || "07:00";
+        setWakeUpTime(fetchedWakeUpTime);
 
         const patientRef = doc(db, "invoices", email.replace(/[@.]/g, "_"));
         const docSnap = await getDoc(patientRef);
 
         if (docSnap.exists()) {
           const data = docSnap.data();
-
-          // Fetch latest visit medications
           const { latestMedications, latestVisitDate } = await fetchLatestMedications(email);
+
+          const medicationsWithReminders = latestMedications.map((med) => ({
+            ...med,
+            reminderTimes: med.reminderTimes || calculateReminderTimes(med.frequency, fetchedWakeUpTime),
+            takenToday: med.takenToday || new Array(med.reminderTimes?.length || 1).fill(false), // Initialize taken status
+          }));
 
           setPatient({
             id: email,
@@ -65,84 +97,119 @@ export default function MedicationComponent() {
             email: data.patientEmail || email,
             consultationFee: data.consultationFee || 0,
             totalAmount: data.totalAmount || 0,
-            medications: latestMedications,
+            medications: medicationsWithReminders,
             latestVisitDate,
           });
-        } else {
-          console.warn("No patient data found in Firestore.");
         }
       } catch (error) {
-        console.error("Error fetching patient data:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     });
 
+    // Reset taken status daily
+    const interval = setInterval(() => {
+      const newDate = new Date().toDateString();
+      if (newDate !== currentDate) {
+        setCurrentDate(newDate);
+        setPatient((prev) =>
+          prev
+            ? {
+                ...prev,
+                medications: prev.medications.map((med) => ({
+                  ...med,
+                  takenToday: new Array(med.reminderTimes?.length || 1).fill(false),
+                })),
+              }
+            : null
+        );
+      }
+    }, 60000); // Check every minute
+
     return () => {
-      console.log("Unsubscribing from auth state changes...");
       unsubscribe();
+      clearInterval(interval);
     };
-  }, []);
+  }, [currentDate]);
 
   const fetchLatestMedications = async (email: string) => {
-    try {
-      console.log(`Fetching medications for email: ${email}`);
+    const emailKey = email.replace(/[@.]/g, "_");
+    const visitsCollectionRef = collection(db, "patient-medication", emailKey, "visits");
+    const visitSnapshots = await getDocs(visitsCollectionRef);
 
-      const emailKey = email.replace(/[@.]/g, "_");
-      const visitsCollectionRef = collection(db, "patient-medication", emailKey, "visits");
-
-      const visitSnapshots = await getDocs(visitsCollectionRef);
-      if (visitSnapshots.empty) {
-        console.warn("No visits found.");
-        return { latestMedications: [], latestVisitDate: "Unknown" };
-      }
-
-      // Get latest visit (highest timestamp)
-      let latestVisitId = "";
-      let latestTimestamp = 0;
-
-      visitSnapshots.docs.forEach((visitDoc) => {
-        const visitId = visitDoc.id;
-        const timestampMatch = visitId.match(/visit_(\d+)/);
-        const timestamp = timestampMatch ? Number(timestampMatch[1]) : 0;
-
-        if (timestamp > latestTimestamp) {
-          latestTimestamp = timestamp;
-          latestVisitId = visitId;
-        }
-      });
-
-      if (!latestVisitId) {
-        return { latestMedications: [], latestVisitDate: "Unknown" };
-      }
-
-      // Fetch medications from the latest visit
-      const medicationsCollectionRef = collection(db, "patient-medication", emailKey, "visits", latestVisitId, "medications");
-      const medicationsSnapshot = await getDocs(medicationsCollectionRef);
-
-      const latestMedications: Medication[] = medicationsSnapshot.docs.map((doc) => ({
-        name: doc.data().name || "Unknown",
-        dosage: doc.data().dosage || "N/A",
-        amount: doc.data().amount || 0,
-        frequency: doc.data().frequency || "N/A",
-        duration: doc.data().duration || "N/A",
-        quantity: doc.data().quantity || "N/A",
-      }));
-
-      const latestVisitDate = new Date(latestTimestamp).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-
-      console.log(`Latest visit date: ${latestVisitDate}, Medications found: ${latestMedications.length}`);
-      return { latestMedications, latestVisitDate };
-    } catch (error) {
-      console.error("Error fetching latest medications:", error);
+    if (visitSnapshots.empty) {
       return { latestMedications: [], latestVisitDate: "Unknown" };
     }
+
+    let latestVisitId = "";
+    let latestTimestamp = 0;
+
+    visitSnapshots.docs.forEach((visitDoc) => {
+      const timestamp = Number(visitDoc.id.match(/visit_(\d+)/)?.[1] || 0);
+      if (timestamp > latestTimestamp) {
+        latestTimestamp = timestamp;
+        latestVisitId = visitDoc.id;
+      }
+    });
+
+    if (!latestVisitId) {
+      return { latestMedications: [], latestVisitDate: "Unknown" };
+    }
+
+    const medicationsCollectionRef = collection(db, "patient-medication", emailKey, "visits", latestVisitId, "medications");
+    const medicationsSnapshot = await getDocs(medicationsCollectionRef);
+
+    const latestMedications: Medication[] = medicationsSnapshot.docs.map((doc) => ({
+      name: doc.data().name || "Unknown",
+      dosage: doc.data().dosage || "N/A",
+      amount: doc.data().amount || 0,
+      frequency: doc.data().frequency || "N/A",
+      duration: doc.data().duration || "N/A",
+      quantity: doc.data().quantity || "N/A",
+      reminderTimes: doc.data().reminderTimes || undefined,
+      takenToday: doc.data().takenToday || undefined,
+    }));
+
+    const latestVisitDate = new Date(latestTimestamp).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    return { latestMedications, latestVisitDate };
+  };
+
+  const markDoseTaken = (medIndex: number, doseIndex: number) => {
+    setPatient((prev) =>
+      prev
+        ? {
+            ...prev,
+            medications: prev.medications.map((med, i) =>
+              i === medIndex && med.takenToday
+                ? { ...med, takenToday: med.takenToday.map((taken, j) => (j === doseIndex ? true : taken)) }
+                : med
+            ),
+          }
+        : null
+    );
+  };
+
+  const handleDrugPress = (med: Medication, index: number) => {
+    router.push({
+      pathname: "/medication",
+      params: {
+        name: med.name,
+        dosage: med.dosage,
+        frequency: med.frequency,
+        duration: med.duration,
+        reminderTimes: JSON.stringify(med.reminderTimes),
+        takenToday: JSON.stringify(med.takenToday),
+        index: index.toString(),
+      },
+    });
   };
 
   if (loading) {
@@ -156,67 +223,53 @@ export default function MedicationComponent() {
   if (!patient || patient.medications.length === 0) {
     return (
       <View>
-            <Image source={require('./../../assets/find.png')} className='w-full h-[500px]'/>
-            <Text className='text-[40px] mt-5 text-green-1 font-popB'>No Medications For You!</Text>
-            <View className="h-[50px]"></View>
-          </View>
+        <Image source={require("./../../assets/find.png")} className="w-full h-[500px]" />
+        <Text className="text-[40px] mt-5 text-green-1 font-popB">No Medications For You!</Text>
+        <View className="h-[50px]" />
+      </View>
     );
-  }
-
-  const handleDrugPress = (med:Medication) => { 
-    router.push({
-      pathname: '/medication',
-      params: {
-        name:med.name,
-        dosage:med.dosage,
-        frequency: med.frequency,
-        duration:med.duration
-      }
-    })
   }
 
   return (
     <ScrollView className="bg-white h-full p-1 mt-4 w-full mb-[200px]">
       <View>
-        {/* <Text className="mt-8 text-xl font-popSb text-center text-green-1">
-          Latest Medication
-        </Text> */}
-
         <Text className="text-lg font-semibold text-green-700 font-popSb">
           Visited The Hospital on: {patient.latestVisitDate}
         </Text>
         <View className="flex flex-row flex-wrap gap-4">
-        {patient.medications.map((med, index) => (
-          <TouchableOpacity
-          onPress={()=>handleDrugPress(med)}
-            key={index}
-           className="w-[48%] bg-green-50 p-3 rounded-2xl shadow-sm mt-3 h-36"
-          >
-            <View className="flex-1 flex flex-row mb-2">
-              <View>
-                <Image source={require('./../../assets/drug.png')} className="w-10 h-10"/>
+          {patient.medications.map((med, index) => (
+            <TouchableOpacity
+              onPress={() => handleDrugPress(med, index)}
+              key={index}
+              className="w-[48%] bg-green-50 p-3 rounded-2xl shadow-sm mt-3 h-36"
+            >
+              <View className="flex-1 flex flex-row mb-2">
+                <View>
+                  <Image source={require("./../../assets/drug.png")} className="w-10 h-10" />
+                </View>
+                <View>
+                  <Text className="font-popSb text-xs">MediSync</Text>
+                  <Text className="text-xl font-popSb text-gray-500 capitalize">{med.name}</Text>
+                </View>
               </View>
-             <View>
-             <Text className="font-popSb text-xs">MediSync</Text>
-              <Text className="text-xl font-popSb text-gray-500 capitalize">
-                {med.name}
-              </Text>
-             </View>
-            </View>
-            <View className="flex flex-row justify-between items-center">
-            <View className="bg-green-100 p-2 py-3 rounded-xl h-fit flex justify-end px-4 w-32 items-center">
-              <Text className="text-gray-600 text-lg font-popSb">
-               7:00 AM
-              </Text>
-            </View>
-            <TouchableOpacity 
-              onPress={()=>router.back()}
-              className="justify-center flex items-center p-2 rounded-full bg-white">
-              <Image source={require('./../../assets/right-up.png')} style={{ width: 20, height: 20 }} />
+              <View className="flex flex-row justify-between items-center">
+                <View className="bg-green-100 p-2 py-3 rounded-xl h-fit flex justify-end px-4 w-32 items-center">
+                  <Text className="text-gray-600 text-lg font-popSb">
+                    {med.reminderTimes?.[0] || "N/A"}
+                  </Text>
+                  <Text className="text-sm text-gray-500 font-popSb">
+                    {med.takenToday?.[0] ? "Taken" : "Pending"}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => markDoseTaken(index, 0)} // Mark first dose as taken
+                  className="justify-center flex items-center p-2 rounded-full bg-white"
+                >
+                  <Image source={require("./../../assets/right-up.png")} style={{ width: 20, height: 20 }} />
                 </TouchableOpacity>
-          </View>
-          </TouchableOpacity>
-        ))}
+              </View>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
     </ScrollView>

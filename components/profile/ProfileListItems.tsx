@@ -3,17 +3,21 @@ import React from 'react'
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 const listItems = [
-    {
+      {
+        imageUrl: require('./../../assets/clock1.png'),
+        name: 'Set Custom Reminders',
+      },
+      {
+        imageUrl: require('./../../assets/clock1.png'),
+        name: 'Set Custom Time',
+      },
+     {
         imageUrl: require('./../../assets/old.png'),
         name: 'Caregiver Mode',
       },
       {
         imageUrl: require('./../../assets/info.png'),
         name: 'Add Personal Information',
-      },
-      {
-        imageUrl: require('./../../assets/doc.png'),
-        name: 'Personal Doctor Information',
       },
       {
         imageUrl: require('./../../assets/achieve.png'),

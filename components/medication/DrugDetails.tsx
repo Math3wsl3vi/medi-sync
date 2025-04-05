@@ -4,7 +4,7 @@ import { useLocalSearchParams } from 'expo-router'
 
 const DrugDetails = () => {
 
-    const { name, dosage, frequency, duration } = useLocalSearchParams()
+    const { name, dosage, frequency, duration, reminderTimes } = useLocalSearchParams()
   return (
     <View>
         {/* drug detail */}
@@ -12,7 +12,7 @@ const DrugDetails = () => {
             <View className='border rounded-full p-2 h-20 w-20 flex items-center justify-center mt-10'>
             <Image source={require('./../../assets/pillNew.png')} className='w-10 h-10'/>
             </View>
-            <Text className='font-pop text-lg'>7:00 AM Daily</Text>
+            <Text className='font-pop text-lg'>{reminderTimes}</Text>
             <Text className='font-popSb text-2xl text-green-1 capitalize'>{name}</Text>
             <Text className='font-pop text-lg'>Also know as {name}</Text>
             <View className='flex flex-row justify-center gap-5 mt-10'>
