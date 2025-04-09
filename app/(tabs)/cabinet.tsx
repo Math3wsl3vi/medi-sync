@@ -7,6 +7,7 @@ import { Image } from 'react-native'
 import ChartData from '~/components/cabinet/ChartData'
 import StreakData from '~/components/cabinet/StreakData'
 import CurrentMedications from '~/components/cabinet/CurrentMedications'
+import OwnMedicatons from '~/components/cabinet/OwnMedicatons'
 
 const Cabinet = () => {
   const router = useRouter()
@@ -26,6 +27,7 @@ const Cabinet = () => {
           <Ionicons name="settings-outline" size={25} color="black" />
         </TouchableOpacity>
       </View>
+      <OwnMedicatons/>
       <CurrentMedications/>
       {/* pie data chart */}
       <ChartData/>

@@ -13,7 +13,7 @@ export default function CustomTabBar({
 }: BottomTabBarProps) {
   return (
     <View className="bg-white">
-    <View className="flex-row justify-around items-center bg-white px-3 py-4 rounded-full shadow-lg m-2">
+    <View className="flex-row justify-around items-center bg-white px-3 py-4 rounded-full shadow-lg mx-4 mb-2">
       {state.routes.map((route, index) => {
         const isFocused = state.index === index;
 

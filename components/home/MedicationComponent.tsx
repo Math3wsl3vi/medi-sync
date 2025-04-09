@@ -28,6 +28,15 @@ interface Patient {
   latestVisitDate: string;
 }
 
+type Timeframe = 'Morning' | 'Noon' | 'Evening' | 'Night';
+
+interface ReminderGroupItem {
+  medication: Medication;
+  time: string;
+  medIndex: number;
+  doseIndex: number;
+}
+
 const calculateReminderTimes = (frequency: string, wakeUpTime: string): string[] => {
   const [wakeHour, wakeMinute] = wakeUpTime.split(":").map(Number);
   const baseTime = new Date();
@@ -86,7 +95,7 @@ export default function MedicationComponent() {
 
           const medicationsWithReminders = latestMedications.map((med) => ({
             ...med,
-            reminderTimes: med.reminderTimes || calculateReminderTimes(med.frequency, fetchedWakeUpTime),
+            reminderTimes: calculateReminderTimes(med.frequency, fetchedWakeUpTime),
             takenToday: med.takenToday || new Array(med.reminderTimes?.length || 1).fill(false), // Initialize taken status
           }));
 
@@ -160,16 +169,23 @@ export default function MedicationComponent() {
     const medicationsCollectionRef = collection(db, "patient-medication", emailKey, "visits", latestVisitId, "medications");
     const medicationsSnapshot = await getDocs(medicationsCollectionRef);
 
-    const latestMedications: Medication[] = medicationsSnapshot.docs.map((doc) => ({
-      name: doc.data().name || "Unknown",
-      dosage: doc.data().dosage || "N/A",
-      amount: doc.data().amount || 0,
-      frequency: doc.data().frequency || "N/A",
-      duration: doc.data().duration || "N/A",
-      quantity: doc.data().quantity || "N/A",
-      reminderTimes: doc.data().reminderTimes || undefined,
-      takenToday: doc.data().takenToday || undefined,
-    }));
+    const latestMedications: Medication[] = medicationsSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      const frequency = data.frequency || "1x/day";
+      const reminderTimes = calculateReminderTimes(frequency, wakeUpTime);
+    
+      return {
+        name: data.name || "Unknown",
+        dosage: data.dosage || "N/A",
+        amount: data.amount || 0,
+        frequency,
+        duration: data.duration || "N/A",
+        quantity: data.quantity || "N/A",
+        reminderTimes,
+        takenToday: new Array(reminderTimes.length).fill(false),
+      };
+    });
+    
 
     const latestVisitDate = new Date(latestTimestamp).toLocaleDateString("en-US", {
       year: "numeric",
@@ -212,6 +228,36 @@ export default function MedicationComponent() {
     });
   };
 
+
+  const groupRemindersByTimeframe = (
+    medications: Medication[]
+  ): Record<Timeframe, ReminderGroupItem[]> => {
+    const groups: Record<Timeframe, ReminderGroupItem[]> = {
+      Morning: [],
+      Noon: [],
+      Evening: [],
+      Night: [],
+    };
+  
+    medications.forEach((medication, medIndex) => {
+      medication.reminderTimes?.forEach((time, doseIndex) => {
+        const [hour, minute] = time.split(':').map(Number);
+  
+        let timeframe: Timeframe;
+        if (hour < 10) timeframe = 'Morning';
+        else if (hour < 14) timeframe = 'Noon';
+        else if (hour < 20) timeframe = 'Evening';
+        else timeframe = 'Night';
+  
+        groups[timeframe].push({ medication, time, medIndex, doseIndex });
+      });
+    });
+  
+    return groups;
+  };
+  
+  
+
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -230,55 +276,65 @@ export default function MedicationComponent() {
     );
   }
 
+  const groupedReminders = groupRemindersByTimeframe(patient.medications);
+
   return (
-    <ScrollView className="bg-white h-full p-1 mt-4 w-full mb-[200px]">
-      <View>
-        <Text className="text-lg font-semibold text-green-700 font-popSb">
-          Visited The Hospital on: {patient.latestVisitDate}
-        </Text>
-        <View className="flex flex-row flex-wrap gap-4">
-          {patient.medications.map((med, index) => (
-            <TouchableOpacity
-              onPress={() => handleDrugPress(med, index)}
-              key={index}
-              className="w-[48%] bg-green-50 p-3 rounded-2xl shadow-sm mt-3 h-36"
-            >
-              <View className="flex-1 flex flex-row mb-2">
-                <View>
-                  <Image source={require("./../../assets/drug.png")} className="w-10 h-10" />
+    <ScrollView className="bg-white h-full p-2 mt-4 w-full mb-[30px]">
+      {['Morning', 'Noon', 'Evening', 'Night'].map((section) => (
+        <View key={section} className="mb-4">
+          <Text className="text-2xl font-popB text-green-700 mb-2">{section}</Text>
+  
+          <View className="flex flex-row flex-wrap gap-4">
+          {groupedReminders[section as Timeframe].map(
+             ({ medication, time, medIndex, doseIndex }: ReminderGroupItem, i: number) => (
+              <TouchableOpacity
+                key={`${medIndex}-${doseIndex}-${section}`}
+                onPress={() => handleDrugPress(medication, medIndex)}
+                className="w-[48%] bg-green-50 p-3 rounded-2xl shadow-sm h-36"
+              >
+                {/* Drug Info */}
+                <View className="flex-1 flex flex-row mb-2">
+                  <Image source={require('./../../assets/drug.png')} className="w-10 h-10" />
+                  <View>
+                    <Text className="font-popSb text-xs">MediSync</Text>
+                    <Text className="text-xl font-popSb text-gray-500 capitalize">{medication.name}</Text>
+                  </View>
                 </View>
-                <View>
-                  <Text className="font-popSb text-xs">MediSync</Text>
-                  <Text className="text-xl font-popSb text-gray-500 capitalize">{med.name}</Text>
-                </View>
-              </View>
-              <View className="flex flex-row justify-between items-center">
-                <View className="bg-green-100 rounded-full flex flex-row justify-start gap-2 w-32 items-center p-1">
-               <View className="w-10 h-10 bg-white rounded-full p-2 flex items-center justify-center">
-               <Image source={require("./../../assets/clock1.png")} className="w-6 h-6" style={{tintColor:'green'}} />
-               </View>
-                  <Text className="text-gray-600 text-lg font-popSb">
-                    {med.reminderTimes?.[0] || "N/A"}
-                  </Text>
-                </View>
-                <TouchableOpacity
-                    onPress={() => markDoseTaken(index, 0)}
+  
+                {/* Reminder Time and Check */}
+                <View className="flex flex-row justify-between items-center">
+                  <View className="bg-green-100 rounded-full flex flex-row justify-start gap-2 w-32 items-center p-1">
+                    <View className="w-10 h-10 bg-white rounded-full p-2 flex items-center justify-center">
+                      <Image
+                        source={require('./../../assets/clock1.png')}
+                        className="w-6 h-6"
+                        style={{ tintColor: 'green' }}
+                      />
+                    </View>
+                    <Text className="text-gray-600 text-lg font-popSb">{time}</Text>
+                  </View>
+  
+                  <TouchableOpacity
+                    onPress={() => markDoseTaken(medIndex, doseIndex)}
                     className={`justify-center flex items-center p-2 rounded-full ${
-                      med.takenToday?.[0] ? 'bg-green-500' : 'bg-green-100'
+                      medication.takenToday?.[doseIndex] ? 'bg-green-500' : 'bg-green-100'
                     }`}
                   >
-                    {/* Add a check icon or any other indicator here */}
                     <Image
                       source={require('./../../assets/check1.png')}
                       className="w-6 h-6"
-                      style={{ tintColor: med.takenToday?.[0] ? 'white' : 'black' }}
+                      style={{
+                        tintColor: medication.takenToday?.[doseIndex] ? 'white' : 'black',
+                      }}
                     />
                   </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
-          ))}
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-      </View>
+      ))}
     </ScrollView>
   );
+  
 }

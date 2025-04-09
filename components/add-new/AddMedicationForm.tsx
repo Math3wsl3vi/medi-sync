@@ -148,7 +148,7 @@ const AddMedicationForm = () => {
                 {/* Submit Button */}
                 <TouchableOpacity
                 onPress={saveMedication}
-                className="w-full py-4 px-4 bg-green-500 rounded-md">
+                className="w-full py-4 px-4 bg-green-1 rounded-md">
                     {loading ? 
                     <ActivityIndicator size={'large'} color={'white'}/> :
                     <Text className="text-center text-white text-2xl font-popSb">Add Medication</Text>
